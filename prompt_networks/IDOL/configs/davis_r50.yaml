@@ -1,0 +1,55 @@
+MODEL:
+  META_ARCHITECTURE: "IDOL"
+  WEIGHTS: "ckpt/davis.pth"
+  PIXEL_MEAN: [123.675, 116.280, 103.530]
+  PIXEL_STD: [58.395, 57.120, 57.375]
+  MASK_ON: True
+  RESNETS:
+    DEPTH: 50
+    STRIDE_IN_1X1: False
+    OUT_FEATURES: ["res2", "res3", "res4", "res5"]
+  IDOL:
+    NUM_CLASSES: 1
+    MULTI_CLS_ON: True
+DATASETS:
+  DATASET_RATIO: [1.0, 0.75, 0.75, 0.3]
+  TRAIN: ("davis_train", "ytvis_2019_train", "ytvis_2021_train","ytvis_ovis_train")
+  TEST: ("davis_val",)
+SOLVER:
+  IMS_PER_BATCH: 8
+  BASE_LR: 0.00005
+  STEPS: (8500,)
+  MAX_ITER: 12000
+  WARMUP_FACTOR: 1.0
+  WARMUP_ITERS: 10
+  WEIGHT_DECAY: 0.0001
+  OPTIMIZER: "ADAMW"
+  BACKBONE_MULTIPLIER: 0.1
+  CLIP_GRADIENTS:
+    ENABLED: True
+    CLIP_TYPE: "full_model"
+    CLIP_VALUE: 0.01
+    NORM_TYPE: 2.0
+  CHECKPOINT_PERIOD: 1000
+INPUT:
+  SAMPLING_FRAME_NUM: 2
+  SAMPLING_FRAME_RANGE:  10
+  # MIN_SIZE_TRAIN_SAMPLING : ["range", "choice", "range_by_clip", "choice_by_clip"]
+  MIN_SIZE_TRAIN_SAMPLING: "choice_by_clip"
+  # RANDOM_FLIP : ["none", "horizontal", "flip_by_clip"]. "horizontal" is set by default.
+  RANDOM_FLIP: "flip_by_clip"
+  # AUGMENTATIONS: []
+  # MIN_SIZE_TRAIN: (360, 480)
+  MIN_SIZE_TRAIN: (392, 416, 448, 480, 512, 544, 576, 608, 640)
+  MAX_SIZE_TRAIN: 1024
+  MIN_SIZE_TEST: 480
+  CROP:
+    ENABLED: True
+    TYPE: "absolute_range"
+    SIZE: (384, 600)
+  FORMAT: "RGB"
+DATALOADER:
+  FILTER_EMPTY_ANNOTATIONS: False
+  NUM_WORKERS: 8
+VERSION: 2
+OUTPUT_DIR: ./davis_res
